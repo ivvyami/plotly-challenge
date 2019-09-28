@@ -73,11 +73,10 @@ function buildCharts(sample) {
     }]
     
     var layout = {
-      height: 600,
-      width: 400
+      showlegent: true
     }
 
-    Plotly.newPlot("pie", data, layout);
+    Plotly.newPlot("pie", data);
 
     // HINT: You will need to use slice() to grab the top 10 sample_values,
     // otu_ids, and labels (10 each).
