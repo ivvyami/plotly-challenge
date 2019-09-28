@@ -3,7 +3,9 @@ function buildMetadata(sample) {
   // @TODO: Complete the following function that builds the metadata panel
 
   // Use `d3.json` to fetch the metadata for a sample
-    var url = "/api/belly_button";
+    var url = `/metadata/${sample}`;
+  
+
     d3.json(url).then(function(response) {
 
       console.log(response);
@@ -11,32 +13,79 @@ function buildMetadata(sample) {
     var data = response;      
     // Use d3 to select the panel with id of `#sample-metadata`
     // Use `.html("") to clear any existing metadata
-    d3.select("#sample-metadata").html("");
+    let metaData = d3.select("#sample-metadata");
+
+    metaData.html("");
 
     // Use `Object.entries` to add each key and value pair to the panel
     Object.entries(data).forEach(([key, value]) => {
-      let metaData = d3.select("sample-metadata");
-      metaData.append("h4")
+      metaData.append("h6")
       .text(`${key}: ${value}`);
   });
 
     // Hint: Inside the loop, you will need to use d3 to append new
     // tags for each key-value in the metadata.
-    let d3.select("#sample-metadata")
+  
     // BONUS: Build the Gauge Chart
     // buildGauge(data.WFREQ);
+});
+
 };
 
 function buildCharts(sample) {
 
   // @TODO: Use `d3.json` to fetch the sample data for the plots
+  var url = `/samples/${sample}`;
+  
+  d3.json(url).then(function(response) {
 
+    console.log(response);
+
+    var sampleData = response;
     // @TODO: Build a Bubble Chart using the sample data
 
+    var trace1 = {
+      x: sampleData.otu_ids,
+      y: sampleData.sample_values,
+      mode: 'markers',
+      marker: {
+        color: sampleData.otu_ids,
+        colorscale: "Earth",
+        size: sampleData.sample_values
+      },
+      hovertext: sampleData.otu_labels
+    };
+    
+    var data = [trace1];
+    
+    var layout = {
+      showlegend: false,
+    };
+    
+    Plotly.newPlot('bubble', data, layout);
+  
     // @TODO: Build a Pie Chart
+    var data = [{
+      values: sampleData.sample_values.slice(0, 10),
+      labels: sampleData.otu_ids.slice(0, 10),
+      hovertext: sampleData.otu_labels.slice(0, 10),
+      type: "pie"
+    }]
+    
+    var layout = {
+      height: 600,
+      width: 400
+    }
+
+    Plotly.newPlot("pie", data, layout);
+
     // HINT: You will need to use slice() to grab the top 10 sample_values,
     // otu_ids, and labels (10 each).
-}
+
+});
+};
+
+
 
 function init() {
   // Grab a reference to the dropdown select element
